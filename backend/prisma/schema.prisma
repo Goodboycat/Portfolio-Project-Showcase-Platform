@@ -1,0 +1,47 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id           String       @id @default(uuid())
+  name         String
+  description  String?
+  language     String
+  techStack    String?      // JSON string for array of technologies
+  githubUrl    String?      @map("github_url")
+  demoUrl      String?      @map("demo_url")
+  filePath     String?      @map("file_path")
+  fileSize     Int?         @map("file_size")
+  thumbnailUrl String?      @map("thumbnail_url")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+  isSample     Boolean      @default(false) @map("is_sample")
+  tags         ProjectTag[]
+
+  @@map("projects")
+}
+
+model Tag {
+  id       String       @id @default(uuid())
+  name     String       @unique
+  projects ProjectTag[]
+
+  @@map("tags")
+}
+
+model ProjectTag {
+  projectId String  @map("project_id")
+  tagId     String  @map("tag_id")
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, tagId])
+  @@map("project_tags")
+}
