@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Project Showcase</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div>
+                    <h1 class="header-title">Portfolio Project Showcase</h1>
+                    <p class="header-subtitle">Browse and manage your coding projects</p>
+                </div>
+                <button id="uploadBtn" class="btn btn-primary">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Upload Project
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container main-container">
+        <!-- Search Bar -->
+        <div class="search-section">
+            <div class="search-bar">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <input type="text" id="searchInput" placeholder="Search projects..." class="search-input">
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="filter-header">
+                    <div class="filter-title">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                        </svg>
+                        <h2>Filters</h2>
+                    </div>
+                    <button id="resetBtn" class="btn-reset" style="display: none;">
+                        <svg class="icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Reset
+                    </button>
+                </div>
+
+                <!-- Language Filter -->
+                <div class="filter-section">
+                    <h3 class="filter-subtitle">Language</h3>
+                    <div id="languageFilters" class="filter-options"></div>
+                </div>
+
+                <!-- Tags Filter -->
+                <div class="filter-section">
+                    <h3 class="filter-subtitle">Tags</h3>
+                    <div id="tagFilters" class="filter-options"></div>
+                </div>
+            </aside>
+
+            <!-- Projects Grid -->
+            <main class="main-content">
+                <div id="loadingSpinner" class="loading-spinner">
+                    <div class="spinner"></div>
+                </div>
+                <div id="errorMessage" class="error-message" style="display: none;"></div>
+                <div id="projectCount" class="project-count"></div>
+                <div id="projectsGrid" class="projects-grid"></div>
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <p>No projects found</p>
+                    <button class="btn-link" onclick="document.getElementById('uploadBtn').click()">
+                        Upload your first project
+                    </button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Upload Project</h2>
+                <button class="modal-close" onclick="closeUploadModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <form id="uploadForm" class="modal-body">
+                <div id="uploadError" class="alert alert-error" style="display: none;"></div>
+
+                <div class="form-group">
+                    <label for="projectName">Project Name *</label>
+                    <input type="text" id="projectName" required class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="projectDescription">Description</label>
+                    <textarea id="projectDescription" rows="3" class="form-input"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="projectLanguage">Primary Language *</label>
+                    <input type="text" id="projectLanguage" required class="form-input" placeholder="e.g., JavaScript, Python, Java">
+                </div>
+
+                <div class="form-group">
+                    <label>Tech Stack</label>
+                    <div class="input-with-button">
+                        <input type="text" id="techStackInput" class="form-input" placeholder="Add technology">
+                        <button type="button" onclick="addTech()" class="btn-add">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="techStackList" class="tag-list"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Tags</label>
+                    <div class="input-with-button">
+                        <input type="text" id="tagInput" class="form-input" placeholder="Add tag">
+                        <button type="button" onclick="addTag()" class="btn-add">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="tagList" class="tag-list"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="githubUrl">GitHub URL</label>
+                    <input type="url" id="githubUrl" class="form-input" placeholder="https://github.com/username/repo">
+                </div>
+
+                <div class="form-group">
+                    <label for="demoUrl">Demo URL</label>
+                    <input type="url" id="demoUrl" class="form-input" placeholder="https://demo.example.com">
+                </div>
+
+                <div class="form-group">
+                    <label>Project File (ZIP or TAR.GZ, max 50MB)</label>
+                    <div class="file-upload">
+                        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <input type="file" id="projectFile" accept=".zip,.tar.gz" class="file-input">
+                        <label for="projectFile" class="file-label">Choose a file</label>
+                        <p id="fileName" class="file-name"></p>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" onclick="closeUploadModal()" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">Upload Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Project Detail Modal -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="btn-back" onclick="closeDetailModal()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Back to Projects
+                </button>
+            </div>
+            <div id="projectDetail" class="modal-body"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
